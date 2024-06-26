@@ -1,0 +1,115 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Choose Image</title>
+<style>
+  img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+
+<h2>Choose an Image</h2>
+
+<form id="imageForm" enctype="multipart/form-data">
+  <input type="file" id="imageInput" accept="image/*" onchange="previewImage(event)">
+</form>
+
+<div id="imagePreview"></div>
+
+<script>
+function previewImage(event) {
+  var imageFile = event.target.files[0];
+  var imageType = /image.*/;
+
+  if (imageFile.type.match(imageType)) {
+    var reader = new FileReader();
+
+    reader.onload = function(e) {
+      var imgElement = document.createElement('img');
+      imgElement.src = e.target.result;
+      document.getElementById('imagePreview').innerHTML = '';
+      document.getElementById('imagePreview').appendChild(imgElement);
+    };
+
+    reader.readAsDataURL(imageFile);
+  } else {
+    alert('Please select an image file.');
+  }
+}
+</script>
+
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Choose Image</title>
+<style>
+  img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+
+<h2>Choose an Image</h2>
+
+<form id="imageForm" enctype="multipart/form-data">
+  <input type="file" id="imageInput" accept="image/*" onchange="uploadImage(event)">
+</form>
+
+<div id="imagePreview"></div>
+
+<script>
+function uploadImage(event) {
+  var imageFile = event.target.files[0];
+  var imageType = /image.*/;
+
+  if (imageFile.type.match(imageType)) {
+    var reader = new FileReader();
+
+    reader.onload = function(e) {
+      var imgElement = document.createElement('img');
+      imgElement.src = e.target.result;
+      document.getElementById('imagePreview').innerHTML = '';
+      document.getElementById('imagePreview').appendChild(imgElement);
+
+      // Create form data
+      var formData = new FormData();
+      formData.append('image', imageFile);
+
+      // Send image data to Flask route
+      fetch('/process_image', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.blob())
+      .then(blob => {
+        var imageUrl = URL.createObjectURL(blob);
+        var resultImg = document.createElement('img');
+        resultImg.src = imageUrl;
+        document.getElementById('imagePreview').appendChild(resultImg);
+      })
+      .catch(error => console.error('Error:', error));
+    };
+
+    reader.readAsDataURL(imageFile);
+  } else {
+    alert('Please select an image file.');
+  }
+}
+</script>
+
+</body>
+</html>
